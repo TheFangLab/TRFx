@@ -44,15 +44,13 @@ make
 
 ## Usage examples
 
-Use all default parameters
-
 `./trfx input.fasta > results.txt`
 
 `./trfx input.fasta -t 3 > results.txt`
 
 `./trfx input.fasta -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3 > results.txt`
 
-In fact, all above three commands generate the same results. They all use default parameters.
+All above three commands generate the same results. They all use default parameters.
 
 
 ## Parameters
