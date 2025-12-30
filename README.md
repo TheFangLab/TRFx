@@ -83,9 +83,7 @@ Where: (all weights, penalties, and scores are positive)
   
   [options] = one or more of the following:
   
-  -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million)[2]
-  
-          Human genome HG38 would need -l 6
+  -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million), Human genome HG38 would need -l 6 [2]
   
   -t INT     number of threads [3]
   
