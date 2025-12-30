@@ -145,7 +145,7 @@ Adaptive Block Sizing: CUDA occupancy API for optimal GPU utilization
 ## Citation
 If you use TRFx in your research, please cite:
 
-Yan-Hui Li, Li Fang, Yuan Zhou. TRFx: Accelerating Tandem Repeat Finder with Multithreading and GPU for Third-Generation Sequencing Data. [Journal Name, Volume, Pages, Year].
+Yan-Hui Li, Li Fang, Yuan Zhou. TRFx: Unlocking Genome-Wide Tandem Repeat Analysis via a Hybrid CPU-GPU Acceleration of Tandem Repeat Finder. [Journal Name, Volume, Pages, Year].
 
 
 

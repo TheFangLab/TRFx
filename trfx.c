@@ -8,7 +8,7 @@
 #include "trfx.h"
 #include "misc.c"
 #include "bseq.h"
-
+#define max(a, b) (((a) >= (b)) ? (a) : (b))
 #define min(a, b) (((a) <= (b)) ? (a) : (b))
 extern  void init_d_index();
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     // 解析命令行选项
     int c;
-    while ((c = getopt(argc, argv, "Vv:Aa:Bb:Dd:Mm:Ii:Ss:Pp:Tt:")) >= 0) {
+    while ((c = getopt(argc, argv, "Vv:Aa:Bb:Dd:Mm:Ii:Ss:Pp:Ll:Tt:")) >= 0) {
         switch (c) {
             case 't': n_threads = atoi(optarg); break;
             case 'A': case 'a': opt.match = atoi(optarg); break;
@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
             case 'I': case 'i': opt.PI = atoi(optarg); break;
             case 'S': case 's': opt.minscore = atoi(optarg); break;
             case 'P': case 'p': opt.maxperiod = atoi(optarg); break;
+            case 'L': case 'l': opt.maxwraplength = max(opt.maxwraplength, atoi(optarg) * 1000000); break;
             case 'T': n_threads = atoi(optarg); break;
             case 'V': case 'v':
                 puts(TRFx_VERSION);
@@ -121,9 +122,9 @@ int main(int argc, char *argv[])
 
     // 检查是否有输入文件
     if (optind >= argc) {
-        fprintf(stderr, "Usage: trfx File -a Match -b Mismatch  -d Delta  -m  PM -i  PI  -s Minscore -p Maxperiod -t thread \n");
-        fprintf(stderr, "Default: trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -t 3\n");
-        fprintf(stderr, "Default is OK in most time , So simply use: ./trfx ./inputFile -t 8 (number of threads)\n");
+        fprintf(stderr, "Usage: trfx File -a Match -b Mismatch  -d Delta  -m  PM -i  PI  -s Minscore -p Maxperiod -l maxwraplength -t thread \n");
+        fprintf(stderr, "Default: trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3\n");
+        fprintf(stderr, "Default is good in most time , So simply use: ./trfx ./inputFile -t 8 (number of threads)\n");
         fprintf(stderr, "Where: (all weights, penalties, and scores are positive)\n");
         fprintf(stderr, "  File = sequences input file\n");
         fprintf(stderr, "  Match  = matching weight [2]\n");
@@ -134,6 +135,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "  Minscore = minimum alignment score to report [50]\n");
         fprintf(stderr, "  MaxPeriod = maximum period size to report [2000]\n");
         fprintf(stderr, "  [options] = one or more of the following:\n");
+        fprintf(stderr, "    -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million)[2]\n            Human genome HG38 would need -l 6\n");
         fprintf(stderr, "    -t INT     number of threads [%d]\n", n_threads);
         fprintf(stderr, "    -V         show version number\n");
         return 1;
