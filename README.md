@@ -43,18 +43,16 @@ make
 ```
 
 ## Usage examples
-Use all default parameters except threads
 
-`./trfx input.fasta -t 20`
+Use all default parameters
 
- Quick analysis with minimal parameters
- 
-`./trfx reads.fastq -t 8 > results.txt`
+`./trfx input.fasta > results.txt`
 
-Custom parameters for specific analysis
+`./trfx input.fasta -t 3 > results.txt`
 
-`./trfx genome.fa -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 20 > output.txt`
+`./trfx input.fasta -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3 > results.txt`
 
+In fact, all above three commands generate the same results. They all use default parameters.
 
 
 ## Parameters
