@@ -53,13 +53,13 @@ Use all default parameters except threads
 
 Custom parameters for specific analysis
 
-`./trfx genome.fa -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -t 20 > output.txt`
+`./trfx genome.fa -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 20 > output.txt`
 
 
 
 ## Parameters
 
-Default: 'trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -t 3'
+Default: 'trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3'
 
 Default is good in most time , So simply use: ./trfx inputFile -t 8 (number of threads)
 
@@ -82,6 +82,10 @@ Where: (all weights, penalties, and scores are positive)
   MaxPeriod = maximum period size to report [2000]
   
   [options] = one or more of the following:
+  
+  -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million)[2]
+  
+          Human genome HG38 would need -l 6
   
   -t INT     number of threads [3]
   
