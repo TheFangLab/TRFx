@@ -7,7 +7,7 @@ TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Find
 
 
 ## Key Features
-**Unprecedented Speed**: 40x overall acceleration achieved through synergistic optimization:
+**Unprecedented Speed**: 40x overall acceleration achieved through synergistic optimization.
 
 **Bit-identical Output Consistency**: All output formats (dat, mask, ngs) are bit-identical​ with the original TRF. The default BED output is bit-identical with TRF-mod.
 
@@ -76,16 +76,13 @@ make
 **Examples**
 
 ```
-
 # Basic usage with default parameters (8 threads)
 
 ./trfx your_sequence.fasta
 
-
 # Specify thread count for better performance
 
 ./trfx your_sequence.fasta -t 20
-
 
 # Comprehensive analysis with all output formats
 
