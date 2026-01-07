@@ -44,9 +44,9 @@ This command will:
 
 4. Return to the testdirectory
 
-5. Run TRFx on example data input.fastawith parameters -a 2 -b 7 -g 7 -k 80 -i 10 -s 30 -p 2000 -t 8
+5. Run TRFx on example data input.fasta with parameters -a 2 -b 7 -g 7 -k 80 -i 10 -s 30 -p 2000 -t 8
 
-6. Redirect BED format output to output.bed
+6. Redirect BED format result to output.bed
 
 
 
