@@ -1,7 +1,7 @@
 # TRFx: Unlocking Genome-Wide Tandem Repeat Analysis on Third-Generation Sequencing Data
 **40x faster | Bit-identical output consistency | GPU acceleration | Multi-threading**
 
-TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/Benson-Genomics-Lab/TRF)), designed to overcome the computational bottleneck of the original algorithm with third-generation sequencing (TGS) data. It achieves more than 40x speedups​ on standard servers (20 cores, 20 threads), reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining bit-identical​​ with the original TRF and compatibility with ([TRF-mod](https://github.com/lh3/TRF-mod)).
+TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/Benson-Genomics-Lab/TRF)), designed to overcome the computational bottleneck of the original algorithm with third-generation sequencing (TGS) data. It achieves more than 40x speedups​ on standard servers (20 cores, 20 threads), reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining bit-identical​​ output with the original TRF and ([TRF-mod](https://github.com/lh3/TRF-mod)).
 
 
 ## Key Features
