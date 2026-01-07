@@ -4,8 +4,9 @@
 TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/Benson-Genomics-Lab/TRF)), designed to overcome the computational bottleneck of the original algorithm with third-generation sequencing (TGS) data. It achieves more than 40x speedups​ on standard servers (20 cores, 20 threads), reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining bit-identical​​ output with the original TRF and ([TRF-mod](https://github.com/lh3/TRF-mod)).
 
 
-## Key Features
 
+
+## Key Features
 **Unprecedented Speed**: 40x overall acceleration achieved through synergistic optimization:
 
 **Bit-identical Output Consistency**: All output formats (dat, mask, ngs) are bit-identical​ with the original TRF. The default BED output is bit-identical with TRF-mod.
@@ -15,12 +16,15 @@ TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Find
 **Minimal Parameter Tuning**: Default parameters work optimally for most applications.
 
 
+
+
 ## Environment:
 Operating System: The server ran on the Ubuntu 20.04.6 LTS operating system.
 
 Compiler: All code was compiled using GCC version 9.4.0.
 
 GPU Computing: GPU-accelerated computations were supported by the CUDA toolkit version 12.8.
+
 
 
 
@@ -50,6 +54,7 @@ This command will:
 
 
 
+
 ## Installation
 ```
 git clone https://github.com/your_username/TRFx.git
@@ -63,14 +68,12 @@ make
 
 
 ## Usage
-
 **Basic Syntax**
 
 `trfx [options] <in.fa>`
 
 
-
-**Common Examples**
+**Examples**
 
 ```
 
@@ -79,11 +82,9 @@ make
 ./trfx your_sequence.fasta
 
 
-
 # Specify thread count for better performance
 
 ./trfx your_sequence.fasta -t 20
-
 
 
 # Comprehensive analysis with all output formats
@@ -96,9 +97,8 @@ Simply replace your_sequence.fasta with your actual FASTA file path.​ The comp
 
 
 
+
 ## Parameters
-
-
 **Core Parameters**
 
 | Parameter | Description | Default Value |
@@ -127,8 +127,9 @@ Simply replace your_sequence.fasta with your actual FASTA file path.​ The comp
 -v: Print version information.
 
 
-##  Output Files
 
+
+##  Output Files
 TRFx generates multiple output formats to support different downstream analyses. Output files follow this naming pattern:
 
 `<input_filename>.<a>.<b>.<g>.<k>.<i>.<s>.<p>.<extension>\n`
@@ -164,8 +165,10 @@ Generated with the -n option.
 
 Bit-identical​ to the original TRF's ngs output, offering comprehensive statistics for next-generation sequencing analysis. 
 
-## Technical Architecture
 
+
+
+## Technical Architecture
 TRFx accelerates TRF through three key optimizations:
 
 
@@ -177,9 +180,8 @@ TRFx accelerates TRF through three key optimizations:
 
 
 
+
 ##  Frequently Asked Questions
-
-
 **Q: How is the 40× speedup calculated ?**
 
 **A**:​ The 40× acceleration is measured on a 20-core server running 20 threads compared to single-threaded execution of the optimized TRFx code. It represents the combined effect of single-threaded optimizations (2.55-3.04×) and excellent parallel scaling (16.45-16.76× on 20 threads).
@@ -200,14 +202,21 @@ TRFx accelerates TRF through three key optimizations:
 
 **​A​**:​ The capitalization signifies respect for the original Tandem Repeat Finder (TRF) software upon which TRFx is built. 
 
+
+
+
 ## Citation
 If you use TRFx in your research, please cite:
 
 Yan-Hui Li, Li Fang, Yuan Zhou. TRFx: Unlocking Genome-Wide Tandem Repeat Analysis on Third-Generation Sequencing Data. [Journal Name, Volume, Pages, Year].
 
 
+
+
 ## Contributing
 We welcome contributions! Please feel free to submit issues, feature requests, or pull requests.
+
+
 
 
 ## License
