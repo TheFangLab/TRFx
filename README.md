@@ -74,15 +74,19 @@ make
 
 ```
 
-<font color="#666666"># Basic usage with default parameters (8 threads)</font>
+# Basic usage with default parameters (8 threads)
 
 ./trfx your_sequence.fasta
 
-<font color="#666666"># Specify thread count for better performance</font>
+
+
+# Specify thread count for better performance
 
 ./trfx your_sequence.fasta -t 20
 
-<font color="#666666"># Comprehensive analysis with all output formats</font>
+
+
+# Comprehensive analysis with all output formats
 
 ./trfx -a 2 -b 7 -g 7 -k 80 -i 10 -s 30 -p 2000 -t 8 -m -d -n your_sequence.fasta > your_sequence.fasta.2.7.7.80.10.30.2000.bed
 
