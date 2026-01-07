@@ -1,5 +1,5 @@
 # TRFx: Unlocking Genome-Wide Tandem Repeat Analysis on Third-Generation Sequencing Data
-**50x faster TRF for modern genomics | Strict output consistency | GPU acceleration | Multi-threading**
+**40x faster | Bit-identical output consistency | GPU acceleration | Multi-threading**
 
 TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/Benson-Genomics-Lab/TRF)), designed to overcome the computational bottleneck of the original algorithm with third-generation sequencing (TGS) data. It achieves more than 40x speedups​ on standard servers (20 cores, 20 threads), reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining bit-identical​​ with the original TRF and compatibility with ([TRF-mod](https://github.com/lh3/TRF-mod)).
 
@@ -178,22 +178,23 @@ TRFx accelerates TRF through three key optimizations:
 
 **Q: How is the 40× speedup calculated ?**
 
-**A:**​ The 40× acceleration is measured on a 20-core server running 20 threads compared to single-threaded execution of the optimized TRFx code. It represents the combined effect of single-threaded optimizations (2.55-3.04×) and excellent parallel scaling (16.45-16.76× on 20 threads).
+**A**:​ The 40× acceleration is measured on a 20-core server running 20 threads compared to single-threaded execution of the optimized TRFx code. It represents the combined effect of single-threaded optimizations (2.55-3.04×) and excellent parallel scaling (16.45-16.76× on 20 threads).
 
 **Q: Which output formats should I use ?**
 
-**A:**​ Use the default BED format for compatibility with genomic tools and browsers (like TRF-mod). Use the -d, -m, and -n formats for backward compatibility with existing pipelines that rely on TRF's native outputs.
+**A**:​ Use the default BED format for compatibility with genomic tools and browsers (like TRF-mod). Use the -d, -m, and -n formats for backward compatibility with existing pipelines that rely on TRF's native outputs.
 
 **Q: Is GPU required for running TRFx ?**
 
-**A:**​ No. Significant speedups (20-30×) are achievable with CPU threads alone. GPU provides an additional boost (typically 1.25-1.4×).
+**A**:​ No. Significant speedups (20-30×) are achievable with CPU threads alone. GPU provides an additional boost (typically 1.25-1.4×).
 
 **Q: When should I adjust parameters from defaults?**
 
-**A:**​ Only for specialized analyses requiring specific sensitivity tuning. Default parameters are optimized for most applications.
+**A**:​ Only for specialized analyses requiring specific sensitivity tuning. Default parameters are optimized for most applications.
 
 **Q: Why is "TRF" capitalized and the "x" in lowercase in TRFx?**
-**​A:​**​ The capitalization signifies respect for the original Tandem Repeat Finder (TRF) software upon which TRFx is built. 
+
+**​A​**:​ The capitalization signifies respect for the original Tandem Repeat Finder (TRF) software upon which TRFx is built. 
 
 ## Citation
 If you use TRFx in your research, please cite:
