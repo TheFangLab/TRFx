@@ -5,7 +5,7 @@
 # Basic compiler settings - Use GCC for everything
 CC      = gcc
 CFLAGS  = -g -Wall -O2 -Wc++-compat -Wno-unused-function
-LDFLAGS = -lm -lz -lpthread  # Linux不需要-lstdc++，macOS会在检测后添加
+LDFLAGS = -lm -lz -lpthread -lstdc++  
 
 # Detect operating system
 UNAME_S := $(shell uname -s)
@@ -13,7 +13,7 @@ ifeq ($(UNAME_S), Darwin)
     # macOS settings
     CFLAGS  += -mmacosx-version-min=10.9
     CUDA_PATH ?= /usr/local/cuda
-    LDFLAGS += -lstdc++  # macOS需要显式链接C++标准库
+    #LDFLAGS += -lstdc++  # macOS需要显式链接C++标准库
 else
     # Linux settings
     CUDA_PATH ?= /usr/local/cuda

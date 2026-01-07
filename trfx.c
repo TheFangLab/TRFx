@@ -81,70 +81,123 @@ size_t get_optimal_batch_size(const char *filename) {
 }
 
 
+static void usage_mod(FILE *fp, trf_opt opt)
+{
+	fprintf(stderr, "Usage: trfx [options] <in.fa>\n");
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  Parameters:\n");
+	fprintf(stderr, "    -a INT     Match = matching weight [%d]\n", opt.match);
+	fprintf(stderr, "    -b INT     Mismatch = mismatching penalty [%d]\n", -opt.mismatch);
+	fprintf(stderr, "    -g INT     Delta = indel penalty [%d]\n", -opt.indel);
+	fprintf(stderr, "    -k INT     PM = match probability (whole number; 75 or 80) [%d]\n", opt.PM);
+	fprintf(stderr, "    -i INT     PI = indel probability (whole number; 10 or 20) [%d]\n", opt.PI);
+	fprintf(stderr, "    -s INT     Minscore = minimum alignment score to report [%d]\n", opt.minscore);
+	fprintf(stderr, "    -p INT     MaxPeriod = maximum period size to report, within [1,2000] [%d]\n", opt.maxperiod);
+	fprintf(stderr, "    -l INT     maximum TR length expected (in millions) [%d]\n", (int)(opt.maxwraplength*1e-6+.499));
+	fprintf(stderr, "    -t INT     number of threads [%d]\n", opt.n_threads);
+    fprintf(stderr, "  more output formats:\n");
+	fprintf(stderr, "    -n         output in the TRF NGS format\n");
+	fprintf(stderr, "    -d         output in the TRF dat format\n");
+	fprintf(stderr, "    -m         output masked sequence file \n");
+	fprintf(stderr, "    -r         don't eliminate redundancy  \n");
+	fprintf(stderr, "    -v         print versioning information\n");
+	fprintf(stderr, "Notes:\n");
+	fprintf(stderr, "  * BED output format (NB: length of pattern may differ from period):\n");
+	fprintf(stderr, "      ctg start end period copyNum fracMatch fracGap score entroy pattern\n");
+	fprintf(stderr, "  * TRF NGS output format:\n");
+	fprintf(stderr, "      start end period copyNum patLen %%Match %%Gap score %%A %%C %%G %%T entroy pattern seq\n");
+	fprintf(stderr, "  * Larger -l: faster but using more memory\n");
+	fprintf(stderr, "  * Smaller -b: more sensitive but slower\n");
+}
+
 int main(int argc, char *argv[])
 {
     // 初始化默认值和选项
-    int n_threads = 3;
+    
     liftrlimit();
     mm_realtime0 = realtime();
 
     // 使用复合字面量初始化选项
     trf_opt opt = {
-        .maxwraplength = 2000000,
+        .maxwraplength = 12000000,//12000000
         .match = 2,
         .mismatch = -7,
         .indel = -7,
         .PM = 80,
         .PI = 10,
-        .minscore = 50,
-        .maxperiod = 2000
+        .minscore = 30, //30
+        .maxperiod = 2000,
+        .masked = 0,
+        .redundoff = 0, 
+        .datafile = 0,
+        .ngs = 0,
+        .n_threads = 8,
+        .ngsfilename = "",
+        .datafilename = "",
+        .maskfilename = ""
     };
 
+
+    
     // 解析命令行选项
     int c;
-    while ((c = getopt(argc, argv, "Vv:Aa:Bb:Dd:Mm:Ii:Ss:Pp:Ll:Tt:")) >= 0) {
+    while ((c = getopt(argc, argv, "Vv:Aa:Bb:Gg:Ii:Ss:Pp:Ll:Kk:Tt:MmNnDdRr")) >= 0) {
         switch (c) {
-            case 't': n_threads = atoi(optarg); break;
-            case 'A': case 'a': opt.match = atoi(optarg); break;
-            case 'B': case 'b': opt.mismatch = -atoi(optarg); break;
-            case 'D': case 'd': opt.indel = -atoi(optarg); break;
-            case 'M': case 'm': opt.PM = atoi(optarg); break;
-            case 'I': case 'i': opt.PI = atoi(optarg); break;
-            case 'S': case 's': opt.minscore = atoi(optarg); break;
-            case 'P': case 'p': opt.maxperiod = atoi(optarg); break;
-            case 'L': case 'l': opt.maxwraplength = max(opt.maxwraplength, atoi(optarg) * 1000000); break;
-            case 'T': n_threads = atoi(optarg); break;
-            case 'V': case 'v':
+            
+            case 'A': opt.match = atoi(optarg); break; 
+            case 'a': opt.match = atoi(optarg); break;
+            case 'B': opt.mismatch = -atoi(optarg); break;
+            case 'b': opt.mismatch = -atoi(optarg); break;
+            case 'G': opt.indel = -atoi(optarg); break;
+            case 'g': opt.indel = -atoi(optarg); break;
+            case 'K': opt.PM = atoi(optarg); break;
+            case 'k': opt.PM = atoi(optarg); break;
+            case 'I': opt.PI = atoi(optarg); break;
+            case 'i': opt.PI = atoi(optarg); break;
+            case 'S': opt.minscore = atoi(optarg); break;
+            case 's': opt.minscore = atoi(optarg); break;
+            case 'P': opt.maxperiod = atoi(optarg); break;
+            case 'p': opt.maxperiod = atoi(optarg); break;
+            case 'L': opt.maxwraplength = max(opt.maxwraplength, atoi(optarg) * 1000000); break;
+            case 'l': opt.maxwraplength = max(opt.maxwraplength, atoi(optarg) * 1000000); break;
+            case 'T': opt.n_threads = atoi(optarg); break;
+            case 't': opt.n_threads = atoi(optarg); break;
+            case 'M': opt.masked = 1; break;
+            case 'm': opt.masked = 1; break;
+            case 'N': opt.ngs = 1; break;
+            case 'n': opt.ngs = 1; break;
+            case 'R': opt.redundoff = 1; break;
+            case 'r': opt.redundoff = 1; break;
+            case 'D': opt.datafile = 1; break;
+            case 'd': opt.datafile = 1; break;
+            case 'V': puts(TRFx_VERSION); return 0;
+            case 'v':
                 puts(TRFx_VERSION);
                 return 0;
         }
     }
 
-    // 检查是否有输入文件
-    if (optind >= argc) {
-        fprintf(stderr, "Usage: trfx File -a Match -b Mismatch  -d Delta  -m  PM -i  PI  -s Minscore -p Maxperiod -l maxwraplength -t thread \n");
-        fprintf(stderr, "Default: trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3\n");
-        fprintf(stderr, "Default is good in most time , So simply use: ./trfx ./inputFile -t 8 (number of threads)\n");
-        fprintf(stderr, "Where: (all weights, penalties, and scores are positive)\n");
-        fprintf(stderr, "  File = sequences input file\n");
-        fprintf(stderr, "  Match  = matching weight [2]\n");
-        fprintf(stderr, "  Mismatch  = mismatching penalty [7]\n");
-        fprintf(stderr, "  Delta = indel penalty [7]\n");
-        fprintf(stderr, "  PM = match probability (whole number) [80]\n");
-        fprintf(stderr, "  PI = indel probability (whole number) [10]\n");
-        fprintf(stderr, "  Minscore = minimum alignment score to report [50]\n");
-        fprintf(stderr, "  MaxPeriod = maximum period size to report [2000]\n");
-        fprintf(stderr, "  [options] = one or more of the following:\n");
-        fprintf(stderr, "    -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million)[2]\n            Human genome HG38 would need -l 6\n");
-        fprintf(stderr, "    -t INT     number of threads [%d]\n", n_threads);
-        fprintf(stderr, "    -V         show version number\n");
-        return 1;
-    }
+
+    if (optind  >= argc) {
+		usage_mod(stderr, opt);
+		exit(1);
+	}
+
+
+
 
     // 获取第一个输入文件名并计算最优批处理大小
     const char *input_filename = argv[optind];
+    char  tmp_str[50];
+    sprintf(tmp_str,"%d.%d.%d.%d.%d.%d.%d",
+			opt.match,-opt.mismatch,-opt.indel,
+			opt.PM,opt.PI,opt.minscore,opt.maxperiod);
+    sprintf(opt.maskfilename,"%s.%s.mask",input_filename,tmp_str);
+    sprintf(opt.datafilename,"%s.%s.dat",input_filename,tmp_str);
+    sprintf(opt.ngsfilename,"%s.%s.ngs",input_filename,tmp_str);
     size_t tbatch_size = get_optimal_batch_size(input_filename);
-    fprintf(stderr, "batch_size:  (%.2f GB)\n", tbatch_size / 1024.0 / 1024 / 1024);
+
+    fprintf(stderr, "Current batch_size:  (%.2f GB)\n", tbatch_size / 1024.0 / 1024 / 1024);
 
     // 初始化只读变量
     readonly_vars_struct ro_vars;
@@ -154,7 +207,7 @@ int main(int argc, char *argv[])
 
     // 处理所有输入文件
     for (int i = optind; i < argc; ++i) {
-        trf_search_file(argv[i], &opt, n_threads, tbatch_size, &ro_vars);
+        trf_search_file(argv[i], &opt, tbatch_size, &ro_vars);
     }
 
     // 输出运行信息

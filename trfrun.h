@@ -110,10 +110,102 @@ int *newAlignPairindex(int length)
 	return (p);
 }
 
+//trf_print_bed(myResult.GlobalIndexList, seq->name, stdout)
+ int trf_print_bed(const Index_List *head, bseq1_t *seq, FILE *fp)
+{
+	int n = 0, i, name_len; 
+	const Index_List *p;
+	for (i = 0; seq->name[i] != 0 && seq->name[i] != ' ' && seq->name[i] != '\t'; ++i) {}
+	name_len = i;
+	for (p = head; p; p = p->next) {
+		fprintf(fp, "%.*s\t%d\t%d\t%d\t%.2f\t%.2f\t%.2f\t%d\t%.2f\t%s\n", name_len, seq->name, p->first - 1, p->last,
+				p->period, p->copies, p->matches * .01, p->indels * .01, p->score, p->entropy, p->pattern);
+		++n;
+	}
+	return n;
+}
+
+
+void print_Mask_File(Result myResult,  bseq1_t *seq, FILE *masked_fp)
+{
+
+	int count,printcr;
+	int masker;
+	
+	Index_List* lpointer;
+
+		if(masked_fp==NULL)
+		{
+			PrintError("Unable to open output file for writing in MakeMaskedFile routine!");
+			exit(-1);
+		}
+
+        fprintf(masked_fp, ">%s\n", seq->name);
+        unsigned char *seq_data = seq->seq - 1;  // 保持无符号类型
+
+		for(lpointer=myResult.GlobalIndexList;lpointer!=NULL;lpointer=lpointer->next)
+		{
+			for(masker=lpointer->first; masker<=lpointer->last; masker++)
+				seq_data[masker]='N';
+		}
+		printcr=0;
+		for(count=1;seq_data[count]!='\0';count++)
+		{
+			fputc(seq_data[count], masked_fp);
+			printcr++;
+			if(printcr>=60)
+			{
+				printcr=0;
+				fputc('\n', masked_fp);
+			}
+		}
+		fputc('\n', masked_fp);
+		fputc('\n', masked_fp);
+		
+	return;
+}
 
 
 
-void printResult(FILE *destdfp, bseq1_t *seq, Result myResult) 
+ void print_Data_File(Result myResult,  bseq1_t *seq, const trf_opt *opt, FILE *datafile_fp, int i)
+{
+          //  int i = 1;
+			{
+				Index_List* lpointer;
+				int charcount;
+                const unsigned char *seq_data = seq->seq - 1;  // 保持无符号类型
+				/* only for the first one write the header */
+				if (i==0) {
+						fprintf(datafile_fp,"Tandem Repeats Finder Program written by:\n\n");
+						fprintf(datafile_fp,"Gary Benson\n");
+						fprintf(datafile_fp,"Program in Bioinformatics\n");
+						fprintf(datafile_fp,"Boston University\n");
+						fprintf(datafile_fp,"Version %s\n", "4.10.0");
+                        i = 0;
+				}
+
+					fprintf(datafile_fp,"\n\nSequence: %s\n\n\n\nParameters: %d %d %d %d %d %d %d\n\n\n",
+							seq->name,opt->match,-opt->mismatch,-opt->indel,opt->PM,opt->PI,opt->minscore,opt->maxperiod);
+				
+				for(lpointer=myResult.GlobalIndexList;lpointer!=NULL;lpointer=lpointer->next)
+				{
+					fprintf(datafile_fp,"%d %d %d %.1f %d %d %d %d %d %d %d %d %.2f %s ",
+							lpointer->first, lpointer->last, lpointer->period,
+							lpointer->copies, lpointer->size, lpointer->matches,
+							lpointer->indels, lpointer->score, lpointer->acount,
+							lpointer->ccount, lpointer->gcount, lpointer->tcount,
+							lpointer->entropy, lpointer->pattern );
+					for(charcount=lpointer->first; charcount<=lpointer->last;charcount++)
+						fprintf(datafile_fp,"%c", seq_data[charcount]);
+					
+					fprintf(datafile_fp,"\n");
+				}
+			} 
+}
+
+
+
+void print_NGS_File( Result myResult, bseq1_t *seq, FILE *destdfp) 
 {
     if (myResult.GlobalIndexList == NULL) {
         return;
@@ -491,7 +583,9 @@ Result TRF(bseq1_t *pseq, Result myResult, const trf_opt *opt, readonly_vars_str
     Index_List *GlobalIndexList = ret.GlobalIndexList;
     GlobalIndexList = RemoveBySize(GlobalIndexList, ro_vars->maxperiod);
     GlobalIndexList = SortByIndex(GlobalIndexList);
-    GlobalIndexList = RemoveRedundancy(GlobalIndexList);
+    if (!opt->redundoff) {
+		 GlobalIndexList = RemoveRedundancy(GlobalIndexList);
+	}
     GlobalIndexList = SortByCount(GlobalIndexList);
     ret.GlobalIndexList = GlobalIndexList;
 

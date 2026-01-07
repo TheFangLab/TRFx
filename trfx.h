@@ -17,6 +17,14 @@ typedef struct
     unsigned int PI;
     unsigned int minscore;
     unsigned int maxperiod;
+             int masked;
+             int redundoff;
+             int datafile;
+             int ngs;
+            char datafilename[100];
+            char ngsfilename[100];
+            char maskfilename[100];
+            int n_threads;
 } trf_opt;
 
   
@@ -54,7 +62,7 @@ extern "C"
 #endif
 
     // void trf_opt_init(trf_opt *opt);
-    int trf_search_file(const char *fn, const trf_opt *opt, int n_threads, long tbatch_size , readonly_vars_struct *ro_vars);
+    int trf_search_file(const char *fn, const trf_opt *opt, long tbatch_size , readonly_vars_struct *ro_vars);
     void trf_init(trf_opt *opt);
     void init_sm(signed char match, signed char mismatch, readonly_vars_struct *ro_vars);
     void init_and_fill_coin_toss_stats2000_with_4tuplesizes(readonly_vars_struct *ro_vars);

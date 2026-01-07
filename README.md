@@ -1,7 +1,18 @@
-# TRFx: Unlocking Genome-Wide Tandem Repeat Analysis via a Hybrid CPU-GPU Acceleration of Tandem Repeat Finder
-50x faster TRF for modern genomics | Strict output consistency | GPU acceleration | Multi-threading
+# TRFx: Unlocking Genome-Wide Tandem Repeat Analysis on Third-Generation Sequencing Data
+**50x faster TRF for modern genomics | Strict output consistency | GPU acceleration | Multi-threading**
 
-TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/liyanhui607/TRF4.10)), designed to overcome the computational bottleneck of the original algorithm in the era of third-generation sequencing (TGS) data. It achieves 50x speedups​ on standard servers, reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining strict output consistency with the original TRF.
+TRFx is a highly optimized, parallel version of the legendary Tandem Repeat Finder ([TRF4.10](https://github.com/Benson-Genomics-Lab/TRF)), designed to overcome the computational bottleneck of the original algorithm with third-generation sequencing (TGS) data. It achieves more than 40x speedups​ on standard servers (20 cores, 20 threads), reducing the analysis of human-scale TGS datasets from weeks down to hours, while maintaining bit-identical​​ with the original TRF and compatibility with ([TRF-mod](https://github.com/lh3/TRF-mod)).
+
+
+## Key Features
+
+**Unprecedented Speed**: 40x overall acceleration achieved through synergistic optimization:
+
+**Bit-identical Output Consistency**: All output formats (dat, mask, ngs) are bit-identical​ with the original TRF. The default BED output is bit-identical with TRF-mod.
+
+**Hybrid CPU/GPU Architecture**: Intelligent workload distribution automatically routes long sequences  to the GPU for additional acceleration (typically 1.25x-1.4x improvement).
+
+**Minimal Parameter Tuning**: Default parameters work optimally for most applications.
 
 
 ## Environment:
@@ -23,13 +34,20 @@ bash cmd
 
 ```
 
+This command will:
 
-This will:
-✅ Automatically compile TRFx
-✅ Run analysis on example data (FASTA)
-✅ Use 20 CPU threads
-✅ Show detailed performance statistics
-✅ Save results to output.txt
+1. Navigate to the project root directory
+
+2. Clean previous compilation files (make clean)
+
+3. Compile TRFx (make)
+
+4. Return to the testdirectory
+
+5. Run TRFx on example data input.fastawith parameters -a 2 -b 7 -g 7 -k 80 -i 10 -s 30 -p 2000 -t 8
+
+6. Redirect BED format output to output.bed
+
 
 
 ## Installation
@@ -42,109 +60,145 @@ make
 
 ```
 
-## Usage examples
 
-`./trfx input.fasta > results.txt`
 
-`./trfx input.fasta -t 3 > results.txt`
+## Usage
 
-`./trfx input.fasta -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3 > results.txt`
+** Basic Syntax **
 
-All above three commands generate the same results. They all use default parameters.
+`trfx [options] <in.fa>`
+
+
+
+** Common Examples **
+
+```
+
+# Basic usage with default parameters (8 threads)
+
+./trfx your_sequence.fasta
+
+# Specify thread count for better performance
+
+./trfx your_sequence.fasta -t 20
+
+# Comprehensive analysis with all output formats
+
+./trfx -a 2 -b 7 -g 7 -k 80 -i 10 -s 30 -p 2000 -t 8 -m -d -n your_sequence.fasta > your_sequence.fasta.2.7.7.80.10.30.2000.bed
+
+```
+
+Simply replace your_sequence.fasta with your actual FASTA file path.​ The comprehensive command generates all four output formats simultaneously.
+
 
 
 ## Parameters
 
-Default: 'trfx inputFile -a 2 -b 7 -d 7 -m 80 -i 10 -s 50 -p 2000 -l 2 -t 3'
 
-Default is good in most time , So simply use: ./trfx inputFile -t 8 (number of threads)
+**Core Parameters**
 
-Where: (all weights, penalties, and scores are positive)
-
-  File = sequences input file
-  
-  Match  = matching weight [2]
-  
-  Mismatch  = mismatching penalty [7]
-  
-  Delta = indel penalty [7]
-  
-  PM = match probability (whole number) [80]
-  
-  PI = indel probability (whole number) [10]
-  
-  Minscore = minimum alignment score to report [50]
-  
-  MaxPeriod = maximum period size to report [2000]
-  
-  [options] = one or more of the following:
-  
-  -l <n>  maximum TR length expected (in millions) (eg, -l 3 or -l=3 for 3 million), Human genome HG38 would need -l 6 [2]
-  
-  -t INT     number of threads [3]
-  
-  -V         show version number
+| Parameter | Description | Default Value |
+|:---|:---|:---|
+| `-a INT` | Match weight (matching score) | 2 |
+| `-b INT` | Mismatch penalty | 7 |
+| `-g INT` | Indel penalty | 7 |
+| `-k INT` | Match probability (75 or 80) | 80 |
+| `-i INT` | Indel probability (10 or 20) | 10 |
+| `-s INT` | Minimum alignment score to report | 30 |
+| `-p INT` | Maximum period size to report [1-2000] | 2000 |
+| `-l INT` | Maximum TR length expected (in millions) | 12 |
+| `-t INT` | Number of threads | 8 |
 
 
-## Frequently Asked Questions
-Q: Do I need to adjust all parameters?
+**Output Format Options**
 
-A: No. Default parameters work well for most applications. Just specify your input file and number of threads.
+-n: Output in TRF NGS format.
 
-Q: How many threads should I use?
+-d: Output in TRF dat format.
 
-A: Typically use the number of CPU cores available. For modern servers, 16-32 threads is common.
+-m: Output masked sequence file.
 
-Q: Is GPU required?
+-r: Don't eliminate redundancy.
 
-A: No. Significant speedups (20-30x) are achievable with CPU threads alone. GPU provides additional boost for long sequences.
-
-Q: When should I adjust parameters?
-
-A: Only if you need specific sensitivity tuning for specialized analyses.
-
-Q: Where could I find the original TRF4.10?
-
-A: [TRF4.10](https://github.com/liyanhui607/TRF4.10) can be found here: https://github.com/liyanhui607/TRF4.10.
+-v: Print version information.
 
 
+##  Output Files
 
-## Technical Innovations
+TRFx generates multiple output formats to support different downstream analyses. Output files follow this naming pattern:
+
+`<input_filename>.<a>.<b>.<g>.<k>.<i>.<s>.<p>.<extension>\n`
+
+
+### Output File Specifications
+
+**1. BED Format (.bed):**
+
+Default output to stdout (typically redirected to a file).
+
+Fully compatible with TRF-mod, using standard BED format suitable for genome browsers and various genomic analysis tools.
+
+Format: ctg start end period copyNum fracMatch fracGap score entropy pattern
+
+Note: Pattern length may differ from period in BED format.
+
+**2. TRF Dat Format (.dat):**
+
+Generated with the -d option.
+
+Bit-identical​ to the original TRF's dat output, containing detailed alignment information. 
+
+**3. TRF Mask Format (.mask):**
+
+Generated with the -m option.
+
+Bit-identical​ to the original TRF's mask output, providing masked (tagged) sequences. 
+
+**4. TRF NGS Format (.ngs):**
+
+Generated with the -n option.
+
+Bit-identical​ to the original TRF's ngs output, offering comprehensive statistics for next-generation sequencing analysis. 
+
+## Technical Architecture
+
 TRFx accelerates TRF through three key optimizations:
 
-1. Multi-threaded Pipeline Architecture
-   
-I/O-Compute Overlap: Parallel data reading, processing, and writing
 
-Work Stealing: Dynamic load balancing across threads
+**1. Multi-threaded Pipeline Architecture:** Implements I/O-compute overlap with dynamic load balancing and bulk data loading to minimize disk I/O.
 
-Bulk Data Loading: Reads large blocks (10GB+) to minimize disk I/O
+**2. CPU Optimizations:** Features enhanced memory access patterns, dynamic memory reshaping, and replacement of expensive modulo operations with conditional logic.
 
-
-2. CPU Optimizations
-   
-Memory Access Patterns: 16 separate arrays for 2-mer processing
-
-Dynamic Memory Reshaping: On-demand S-array column allocation
-
-Modulo Operation Replacement: Conditional logic for expensive divisions
+**3. Hybrid CPU/GPU Acceleration:** Employs smart workload distribution with shared memory optimization and adaptive block sizing using CUDA occupancy API for optimal GPU utilization.
 
 
-3. Hybrid CPU/GPU Acceleration
-Smart Workload Distribution: 
 
-Sequences >4000bp automatically routed to GPU
+##  Frequently Asked Questions
 
-Shared Memory Optimization: Local histogram accumulation reduces global memory contention
 
-Adaptive Block Sizing: CUDA occupancy API for optimal GPU utilization
+**Q: How is the 40× speedup calculated ?**
 
+**A:**​ The 40× acceleration is measured on a 20-core server running 20 threads compared to single-threaded execution of the optimized TRFx code. It represents the combined effect of single-threaded optimizations (2.55-3.04×) and excellent parallel scaling (16.45-16.76× on 20 threads).
+
+**Q: Which output formats should I use ?**
+
+**A:**​ Use the default BED format for compatibility with genomic tools and browsers (like TRF-mod). Use the -d, -m, and -n formats for backward compatibility with existing pipelines that rely on TRF's native outputs.
+
+**Q: Is GPU required for running TRFx ?**
+
+**A:**​ No. Significant speedups (20-30×) are achievable with CPU threads alone. GPU provides an additional boost (typically 1.25-1.4×).
+
+**Q: When should I adjust parameters from defaults?**
+
+**A:**​ Only for specialized analyses requiring specific sensitivity tuning. Default parameters are optimized for most applications.
+
+**Q: Why is "TRF" capitalized and the "x" in lowercase in TRFx?**
+**​A:​**​ The capitalization signifies respect for the original Tandem Repeat Finder (TRF) software upon which TRFx is built. 
 
 ## Citation
 If you use TRFx in your research, please cite:
 
-Yan-Hui Li, Li Fang, Yuan Zhou. TRFx: Unlocking Genome-Wide Tandem Repeat Analysis via a Hybrid CPU-GPU Acceleration of Tandem Repeat Finder. [Journal Name, Volume, Pages, Year].
-
+Yan-Hui Li, Li Fang, Yuan Zhou. TRFx: Unlocking Genome-Wide Tandem Repeat Analysis on Third-Generation Sequencing Data. [Journal Name, Volume, Pages, Year].
 
 
 ## Contributing
@@ -158,4 +212,4 @@ This license permits use, modification, and distribution for any purpose, includ
 
 For inquiries regarding alternative licensing arrangements (e.g., for proprietary integration), please contact the corresponding author.
 
-The GitHub repository contains the full source code, build instructions, documentation, and examples to ensure reproducibility and foster community adoption.
+
