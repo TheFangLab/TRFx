@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-// 包装函数，用于调用trfx_main并捕获stdout和stderr
+// Wrapper function to call trfx_main and capture stdout and stderr
 int trfx_wrapper(int argc, char *argv[], char **stdout_buf, size_t *stdout_len, 
                  char **stderr_buf, size_t *stderr_len);
 

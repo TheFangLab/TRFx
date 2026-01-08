@@ -12,10 +12,10 @@
 jmp_buf exit_jmp_buf;
 int exit_jmp_buf_initialized = 0;
 
-// 声明trfx_main（通过编译选项将main重命名为trfx_main）
+// Declare trfx_main (main is renamed to trfx_main through compile options)
 extern int trfx_main(int argc, char *argv[]);
 
-// 读取文件描述符的全部内容到缓冲区
+// Read entire content of file descriptor into buffer
 static char* read_fd_to_buffer(int fd, size_t *len) {
     size_t capacity = 4096;
     size_t size = 0;
@@ -50,18 +50,18 @@ int trfx_wrapper(int argc, char *argv[], char **stdout_buf, size_t *stdout_len,
     int stderr_pipe[2];
     int result = 0;
     
-    // 初始化输出参数
+    // Initialize output parameters
     *stdout_buf = NULL;
     *stdout_len = 0;
     *stderr_buf = NULL;
     *stderr_len = 0;
     
-    // 创建管道
+    // Create pipes
     if (pipe(stdout_pipe) < 0 || pipe(stderr_pipe) < 0) {
         return -1;
     }
     
-    // 保存原始的stdout和stderr
+    // Save original stdout and stderr
     int saved_stdout = dup(STDOUT_FILENO);
     int saved_stderr = dup(STDERR_FILENO);
     
@@ -75,35 +75,35 @@ int trfx_wrapper(int argc, char *argv[], char **stdout_buf, size_t *stdout_len,
         return -1;
     }
     
-    // 重定向stdout和stderr到管道
+    // Redirect stdout and stderr to pipes
     dup2(stdout_pipe[1], STDOUT_FILENO);
     dup2(stderr_pipe[1], STDERR_FILENO);
     close(stdout_pipe[1]);
     close(stderr_pipe[1]);
     
-    // 设置 setjmp 来捕获 exit() 调用
+    // Setup setjmp to catch exit() calls
     exit_jmp_buf_initialized = 1;
     int exit_code = setjmp(exit_jmp_buf);
     if (exit_code == 0) {
-        // 第一次调用，正常执行 trfx_main
+        // First call, execute trfx_main normally
         result = trfx_main(argc, argv);
     } else {
-        // 从 longjmp 返回，exit() 被调用了
+        // Returned from longjmp, exit() was called
         result = exit_code;
     }
     exit_jmp_buf_initialized = 0;
     
-    // 刷新缓冲区
+    // Flush buffers
     fflush(stdout);
     fflush(stderr);
     
-    // 恢复原始的stdout和stderr
+    // Restore original stdout and stderr
     dup2(saved_stdout, STDOUT_FILENO);
     dup2(saved_stderr, STDERR_FILENO);
     close(saved_stdout);
     close(saved_stderr);
     
-    // 读取捕获的输出
+    // Read captured output
     *stdout_buf = read_fd_to_buffer(stdout_pipe[0], stdout_len);
     *stderr_buf = read_fd_to_buffer(stderr_pipe[0], stderr_len);
     
