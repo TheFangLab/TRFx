@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# C/C++ compiled files
+*.o
+*.a
+*.out
+*.exe
+trfx
+
+# CUDA
+*.cu.o
+*.ptx
+*.cubin
+*.fatbin
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test output files
+test/*.mask
+test/*.dat
+test/*.ngs
+*.mask
+*.dat
+*.ngs
+
+# Build directories
+pytrfx.egg-info/
+_pytrfx*.so

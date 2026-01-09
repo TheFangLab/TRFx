@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     
     // 解析命令行选项
     int c;
-    while ((c = getopt(argc, argv, "Vv:Aa:Bb:Gg:Ii:Ss:Pp:Ll:Kk:Tt:MmNnDdRr")) >= 0) {
+    while ((c = getopt(argc, argv, "VvAa:Bb:Gg:Ii:Ss:Pp:Ll:Kk:Tt:MmNnDdRr")) >= 0) {
         switch (c) {
             
             case 'A': opt.match = atoi(optarg); break; 
