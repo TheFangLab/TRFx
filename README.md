@@ -57,7 +57,7 @@ This command will:
 
 ## Installation
 ```
-git clone https://github.com/your_username/TRFx.git
+git clone https://github.com/liyanhui607/TRFx.git
 
 cd TRFx
 
