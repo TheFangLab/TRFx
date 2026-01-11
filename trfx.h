@@ -21,9 +21,9 @@ typedef struct
              int redundoff;
              int datafile;
              int ngs;
-            char datafilename[4096];
-            char ngsfilename[4096];
-            char maskfilename[4096];
+            char datafilename[512];
+            char ngsfilename[512];
+            char maskfilename[512];
             int n_threads;
 } trf_opt;
 
