@@ -1,25 +1,23 @@
 from setuptools import setup, Extension
 import os
-import sys
-import subprocess
 
-# 获取项目根目录
+# Get project root directory
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 源文件列表（不包括trfx.c，因为会重新编译）
+# Source file list
 source_files = [
     'pytrfx/pytrfx_module.c',
     'pytrfx/trfx_wrapper.c',
     'kthread.c',
     'bseq.c',
     'map.c',
-    'trfx.c',  # 这个会通过-Dmain=trfx_main重命名main函数
+    'trfx.c',
 ]
 
-# 转换为绝对路径
+# Convert to absolute paths
 source_files = [os.path.join(ROOT_DIR, f) for f in source_files]
 
-# 编译参数
+# Compile arguments
 shim_path = os.path.join(ROOT_DIR, 'pytrfx', 'exit_shim.h')
 
 extra_compile_args = [
@@ -27,25 +25,25 @@ extra_compile_args = [
     '-Wall',
     '-O2',
     '-Wno-unused-function',
-    '-Dmain=trfx_main',  # 关键：将main重命名为trfx_main
-    '-DNO_GPU',  # 默认使用CPU版本
-    '-include', shim_path,  # 强制包含shim头文件，将exit替换为return
+    '-Dmain=trfx_main',  # Important: rename main to trfx_main
+    '-DNO_GPU',  # Default to CPU version
+    '-include', shim_path,  # Force-include shim header to replace exit with return
 ]
 
-# 链接参数
+# Link arguments
 extra_link_args = [
     '-lm',
     '-lz',
     '-lpthread',
 ]
 
-# 包含目录
+# Include directories
 include_dirs = [
     ROOT_DIR,
     'pytrfx',
 ]
 
-# 定义扩展模块
+# Define extension module(s)
 ext_modules = [
     Extension(
         '_pytrfx',
@@ -56,7 +54,7 @@ ext_modules = [
     )
 ]
 
-# 读取README（如果存在）
+# Read README (if present)
 long_description = ""
 readme_path = os.path.join(ROOT_DIR, 'README.md')
 if os.path.exists(readme_path):
@@ -66,24 +64,22 @@ if os.path.exists(readme_path):
 setup(
     name='pytrfx',
     version='1.0.0',
-    description='Python wrapper for TRFx - Tandem Repeat Finder',
+    description='Python wrapper for TRFx - a multi-threaded Tandem Repeats Finder',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='TRFx Team',
     packages=['pytrfx'],
     ext_modules=ext_modules,
-    python_requires='>=3.6',
+    python_requires='>=3.9',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Programming Language :: C',
     ],
 )
